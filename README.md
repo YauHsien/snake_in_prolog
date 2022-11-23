@@ -2,9 +2,9 @@
 
 ### Work Progress
 
-[x] Game Playground
-[x] Key-Press
-[ ] Snake
+- [x] Game Playground
+- [x] Key-Press
+- [ ] Snake
 
 ### Usage
 
