@@ -4,11 +4,12 @@
 
 - [x] Game Playground
 - [x] Key-Press
-- [ ] Snake
+- [x] Snake
+- [ ] Snake Move
 
 ### Usage
 
-Launch `swipl-win.exe` and consult `snake.prolog`, such that:
+Launch `swipl-win.exe` and consult `game.prolog`, such that:
 
 ```
 Welcome to SWI-Prolog (threaded, 64 bits, version 8.4.3)
@@ -23,7 +24,7 @@ For built-in help, use ?- help(Topic). or ?- apropos(Word).
 %  command.prolog compiled into command 0.00 sec, 5 clauses
 %  database.prolog compiled into database 0.00 sec, 1 clauses
 %  input.prolog compiled into input 0.00 sec, 6 clauses
-% c:/Users/黃耀賢/work/yauhsien/snake_prolog/snake.prolog compiled 0.00 sec, 18 clauses
+% c:/Users/黃耀賢/work/yauhsien/snake_prolog/game.prolog compiled 0.00 sec, 18 clauses
 ?- game.
 ```
 
@@ -43,7 +44,7 @@ You will find a console-based game playground.
 |........................................................................|
 |........................................................................|
 |........................................................................|
-|........................................................................|
+|.......................................%##..............................|
 |........................................................................|
 |........................................................................|
 |........................................................................|

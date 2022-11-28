@@ -1,65 +1,20 @@
-:- use_module([ 'command.prolog',
-                'database.prolog',
-                'input.prolog'
-              ]).
+:- module(snake, [snake/5]).
 
-game :-
-    config_game,
-    draw_map,
-    interval_seconds(Int),
-    thread_create(write_update(Int), _Id),
-    keep_input,
-    reset_game.
+snake(SnakeX, SnakeY, SnakeDir, SnakeLen, snake(Body)) :-
+    member(SnakeDir, [up,down,left,right]),
+    !,
+    body(SnakeX-SnakeY, SnakeDir, SnakeLen, [], Body).
 
-config_game :-
-    command:map(C, R),
-    config([ interval_seconds(0.5),
-             game_name('Snake! Arrow Keys: Turn Way; Q Key: Quit . . . '),
-             game_map(C, R),
-             game_start(true)
-           ]).
+body(_-_, _, 0, B, B) :- !.
+body(X-Y, D, L, B, R) :-
+    L > 0,
+    !,
+    next(X-Y, D, X2-Y2),
+    L2 is L - 1,
+    append(B, [X2-Y2], B2),
+    body(X2-Y2, D, L2, B2, R).
 
-config(List) :-
-    foreach( member(Term, List),
-             asserta(Term) ).
-
-reset_game :-
-    reset_config([ interval_seconds(_),
-                   game_name(_),
-                   game_map(_, _),
-                   game_start(_)
-                 ]),
-    writeln('Game End').
-
-reset_config(List) :-
-    foreach( member(Term, List),
-             retract(Term) ).
-
-draw_map :-
-    game_map(C, R),
-    command:expand_map(C, R, ., ~, '|', '+'),
-    game_name(Name),
-    write(Name).
-
-keep_input :-
-    game_start(true), !,
-    input:keystroke(Key),
-    update_db(Key),
-    keep_input.
-keep_input.
-
-update_db(up).
-update_db(down).
-update_db(right).
-update_db(left).
-update_db(quit) :-
-    context_module(M),
-    database:update_db(M:game_start(true),
-                       M:game_start(false)).
-
-write_update(Int) :-
-    game_start(true), !,
-    flush_output,
-    sleep(Int),
-    write_update(Int).
-write_update(_).
+next(X-Y, up, X-Y2) :- Y2 is Y - 1.
+next(X-Y, down, X-Y2) :- Y2 is Y + 1.
+next(X-Y, left, X2-Y) :- X2 is X - 1.
+next(X-Y, right, X2-Y) :- X2 is X + 1.

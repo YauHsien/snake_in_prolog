@@ -1,7 +1,8 @@
 :- module(command, [ clear_screen/0,
                      expand_map/6,
                      map/2,
-                     move_to/2
+                     move_to/2,
+                     put/2
                    ]).
 :- use_module(ansi).
 
@@ -27,7 +28,7 @@ expand_map(C, R, S, Bh, Bv, Bc) :-
                           write(Bv)
                         ; write(S)
                         ) )
-             , nl
+             , write("\n")
              )).
 
 map(C, R) :-
@@ -36,5 +37,13 @@ map(C, R) :-
     C is C0 - 1.
 
 move_to(C, R) :-
-    ansi:command(cursor-position, R, C, Cmd),
-    write(Cmd).
+    ansi:command(cursor-position, 0, 0, CmdZ),
+    write(CmdZ),
+    ansi:command(cursor-down, R, CmdR),
+    write(CmdR),
+    ansi:command(cursor-right, C, CmdC),
+    write(CmdC).
+
+put(X-Y, Term) :-
+    move_to(X, Y),
+    write(Term).
