@@ -87,8 +87,7 @@ write_update(_).
 
 clear_snake :-
     snake(Snake),
-    foreach(member(X-Y, Snake),
-            command:put(X-Y, .)).
+    draw(Snake, .).
 
 update_snake :-
     new_snake(Snake),
@@ -97,14 +96,34 @@ update_snake :-
 
 draw_snake :-
     snake(Snake),
-    foreach(member(X-Y, Snake),
-            command:put(X-Y, #)),
+    draw(Snake, #),
     draw_snake_head.
 
 draw_snake_head :-
-    snake([X-Y|_]),
-    command:put(X-Y, '%').
+    snake(Snake),
+    snake:head(snake(Snake), Head),
+    command:put(Head, '%').
 
 rest_cursor :-
     game_map(X, Y),
     command:move_to(X, Y).
+
+draw([I], S) :-
+    command:put(I, S).
+draw([I,I|R], S) :-
+    draw([I|R], S).
+draw([X-Y,X-Z|R], S) :-
+    command:put(X-Y, S),
+    next(Y, Z, A),
+    draw([X-A,X-Z|R], S).
+draw([X-Y,Z-Y|R], S) :-
+    command:put(X-Y, S),
+    next(X, Z, A),
+    draw([A-Y,Z-Y|R], S).
+
+next(X, Y, Z) :-
+    X < Y,
+    Z is X + 1.
+next(X, Y, Z) :-
+    X > Y,
+    Z is X - 1.
