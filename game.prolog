@@ -12,8 +12,8 @@ game :-
     sleep(0.05),
     thread_create(write_update(Int), _),
     keep_input,
-    sleep(Int),
-    reset_game.
+    % TODO: here sometimes input may pass; it could be race condition on `game_start(T)`.
+    reset_game, !.
 
 config_game :-
     command:map(C, R),
