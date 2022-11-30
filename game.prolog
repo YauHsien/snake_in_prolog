@@ -8,7 +8,9 @@ game :-
     config_game,
     draw_map,
     interval_seconds(Int),
-    thread_create(write_update(Int), _Id),
+    thread_create(update_game(Int), _),
+    sleep(0.05),
+    thread_create(write_update(Int), _),
     keep_input,
     reset_game.
 
@@ -25,6 +27,7 @@ config_game :-
              snake_dir(SnakeDir),
              Snake,
              new_snake(Snake),
+             eatable(+, 1-1),
              game_start(true)
            ]).
 
@@ -74,13 +77,26 @@ update_db(quit) :-
     database:update_db(M:game_start(true), M:game_start(false)).
 update_db(_).
 
+update_game(Int) :-
+    game_start(true), !,
+    ( check_collision,
+      move_snake_head,
+      ( once(snake_eats_something), !
+      ; move_snake_tail
+      )
+    ),
+    sleep(Int),
+    update_game(Int).
+update_game(_).
+
 write_update(Int) :-
     game_start(true), !,
-    clear_snake,
-    update_snake,
-    draw_snake,
-    rest_cursor,
-    flush_output,
+    ( clear_snake
+    , update_snake
+    , draw_snake
+    , rest_cursor
+    , flush_output
+    ),
     sleep(Int),
     write_update(Int).
 write_update(_).
@@ -127,3 +143,33 @@ next(X, Y, Z) :-
 next(X, Y, Z) :-
     X > Y,
     Z is X - 1.
+
+move_snake_head :-
+    snake(Snake),
+    snake_dir(Dir),
+    snake:move_head(snake(Snake), Dir, Snake2),
+    context_module(M),
+    database:update_db(M:new_snake(_), M:new_snake(Snake2)).
+
+move_snake_tail :-
+    new_snake(Snake),
+    snake:move_tail(Snake, Snake2),
+    context_module(M),
+    database:update_db(M:new_snake(_), M:new_snake(Snake2)).
+
+check_collision :-
+    snake(Snake),
+    game_map(X, Y),
+    ( ( snake:collide_self(snake(Snake)), !
+      ; snake:collide(snake(Snake), [1-1,1-X,X-Y,1-Y,1-1])
+      ),
+      context_module(M),
+      database:update_db(M:game_start(true), M:game_start(false))
+    ; true
+    ).
+
+snake_eats_something :-
+    snake(Snake),
+    eatable(S, I),
+    snake:eats(snake(Snake), eatable(S,I)),
+    retract(eatable(S,I)).
