@@ -5,7 +5,9 @@
 - [x] Game Playground
 - [x] Key-Press
 - [x] Snake
-- [ ] Snake Move
+- [x] Snake Move
+- [ ] Snake Self-collision
+- [ ] Snake Collision
 
 ### Usage
 
