@@ -13,3 +13,4 @@ key_int(['\u0002'], left).
 key_int(['\u000E'], down).
 key_int(['\u0006'], right).
 key_int([q], quit).
+key_int(_, unknown).
