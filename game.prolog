@@ -12,6 +12,7 @@ game :-
     sleep(0.05),
     thread_create(write_update(Int), _),
     keep_input,
+    sleep(Int),
     reset_game.
 
 config_game :-
@@ -42,6 +43,7 @@ reset_game :-
                    snake_dir(_),
                    snake(_),
                    new_snake(_),
+                   eatable(_, _),
                    game_start(_)
                  ]),
     nl,
